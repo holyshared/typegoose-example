@@ -1,13 +1,13 @@
-import { prop, Typegoose, Ref } from 'typegoose';
+import { prop, staticMethod, Typegoose, Ref, ModelType } from 'typegoose';
 import { GroupType } from './group';
 
-class RoleType extends Typegoose {
+export class RoleType extends Typegoose {
   @prop({ required: true })
   name: string;
 }
 
 
-class UserType extends Typegoose {
+export class UserType extends Typegoose {
   @prop({ required: true, index: true })
   name: string;
 
@@ -16,6 +16,12 @@ class UserType extends Typegoose {
 
   @prop({ _id: false })
   role: RoleType;
+
+  @staticMethod
+  static findByName(this: ModelType<UserType> & typeof UserType, prefix: string) {
+    const regexp = new RegExp(`^${prefix}`);
+    return this.findOne({ name: { $regex: regexp } });
+  }
 }
 
 export const User = new UserType().getModelForClass(UserType, {

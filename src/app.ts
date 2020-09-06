@@ -16,6 +16,8 @@ const main = async () => {
   const eagerLoadedUser = await User.findById(user.id).populate('group');
   console.log((eagerLoadedUser.group as typeof Group).name);
 
+  const startWithUser = await User.findByName('User ');
+  console.log(startWithUser.name);
 };
 
 main().then(() => {
