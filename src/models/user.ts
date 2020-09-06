@@ -1,5 +1,6 @@
-import { prop, staticMethod, Typegoose, Ref, ModelType } from 'typegoose';
+import { prop, staticMethod, Typegoose, Ref, ModelType, InstanceType } from 'typegoose';
 import { GroupType } from './group';
+import { Types } from 'mongoose';
 
 export class RoleType extends Typegoose {
   @prop({ required: true })
@@ -10,6 +11,9 @@ export class RoleType extends Typegoose {
 export class UserType extends Typegoose {
   @prop({ required: true, index: true })
   name: string;
+
+  @prop({ required: true, select: false })
+  password: string;
 
   @prop({ ref: GroupType })
   group?: Ref<GroupType>
@@ -24,8 +28,19 @@ export class UserType extends Typegoose {
   }
 }
 
+const transform = (_doc: any, ret: InstanceType<UserType>) => {
+  delete ret._id;
+  delete ret.password;
+  return ret;
+};
+
 export const User = new UserType().getModelForClass(UserType, {
   schemaOptions: {
-    collection: 'users'
+    collection: 'users',
+    toJSON: {
+      getters: true,
+      versionKey: false,
+      transform,
+    }
   }
 });
