@@ -8,7 +8,7 @@ mongoose.connect("mongodb://example:example@localhost:27017/example", {
 });
 
 const main = async () => {
-  const user = await User.create({ name: 'User Name' });
+  const user = await User.create({ name: 'User Name', role: { name: "adminstrator" } });
   const group = await Group.create({ name: 'Group Name' });
   user.group = group;
   await user.save();
